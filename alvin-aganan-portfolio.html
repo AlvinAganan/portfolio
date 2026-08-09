@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alvin John Aganan — Full Stack Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0F1C;
+    --panel:#101A2E;
+    --panel-2:#0D1526;
+    --line:#243352;
+    --text:#E9E6DC;
+    --muted:#8B93A8;
+    --muted-2:#5D6785;
+    --amber:#E8A33D;
+    --amber-soft:rgba(232,163,61,0.12);
+    --teal:#57D9C9;
+    --teal-soft:rgba(87,217,201,0.12);
+    --rose:#E1685C;
+    --rose-soft:rgba(225,104,92,0.12);
+    --display:'Space Grotesk', sans-serif;
+    --mono:'JetBrains Mono', monospace;
+    --body:'Inter', sans-serif;
+    --maxw:960px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{ background:var(--ink); color:var(--text); font-family:var(--body); line-height:1.6; -webkit-font-smoothing:antialiased; }
+  ::selection{ background:var(--amber-soft); color:var(--amber); }
+  body::before{
+    content:""; position:fixed; inset:0;
+    background-image:linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:64px 64px; opacity:0.06; pointer-events:none; z-index:0;
+  }
+  a{ color:inherit; }
+  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 28px; position:relative; z-index:1; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  /* ---------- NAV ---------- */
+  .tabbar{ position:sticky; top:0; z-index:50; background:rgba(10,15,28,0.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .tabbar-inner{ max-width:var(--maxw); margin:0 auto; padding:0 28px; display:flex; align-items:center; gap:2px; height:46px; font-family:var(--mono); font-size:13px; overflow-x:auto; }
+  .tab{ display:flex; align-items:center; gap:8px; height:100%; padding:0 16px; color:var(--muted); border-right:1px solid var(--line); text-decoration:none; white-space:nowrap; transition:color .15s ease; }
+  .tab:hover{ color:var(--text); }
+  .tab.active{ color:var(--amber); background:var(--panel); }
+  .tab .dot{ width:6px; height:6px; border-radius:50%; background:var(--teal); flex-shrink:0; }
+  .tabbar-spacer{ flex:1; }
+  .tabbar-status{ color:var(--muted-2); padding-right:4px; white-space:nowrap; }
+
+  /* ---------- HERO ---------- */
+  .hero{ padding:80px 0 56px; }
+  .console{ background:var(--panel); border:1px solid var(--line); border-radius:10px; overflow:hidden; box-shadow:0 30px 60px -30px rgba(0,0,0,0.6); }
+  .console-head{ display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--line); background:var(--panel-2); }
+  .console-head .dots{ display:flex; gap:6px; }
+  .console-head .dots span{ width:10px; height:10px; border-radius:50%; background:#2A3654; }
+  .console-head .label{ margin-left:8px; font-family:var(--mono); font-size:12px; color:var(--muted-2); }
+  .console-body{ padding:26px 24px 28px; font-family:var(--mono); font-size:14.5px; }
+  .console-line{ white-space:pre-wrap; word-break:break-word; }
+  .prompt{ color:var(--teal); }
+  .kw{ color:var(--amber); }
+  .str{ color:var(--teal); }
+  .caret{ display:inline-block; width:8px; height:16px; background:var(--amber); vertical-align:-3px; animation:blink 1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .result-row{ margin-top:20px; padding-top:20px; border-top:1px dashed var(--line); opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .5s ease; }
+  .result-row.show{ opacity:1; transform:translateY(0); }
+  .result-name{ font-family:var(--display); font-weight:700; font-size:clamp(32px,5vw,50px); letter-spacing:-0.01em; line-height:1.05; }
+  .result-title{ font-family:var(--mono); font-size:13.5px; color:var(--amber); margin-top:9px; }
+  .result-tag{ font-size:14px; color:var(--muted); margin-top:14px; max-width:520px; }
+  .result-meta{ display:flex; flex-wrap:wrap; gap:16px; margin-top:16px; font-family:var(--mono); font-size:12px; color:var(--muted); }
+  .result-meta a{ text-decoration:none; }
+  .result-meta a:hover{ color:var(--teal); }
+  .result-meta span{ display:inline-flex; align-items:center; gap:6px; }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding:56px 0; border-top:1px solid var(--line); }
+  .sec-head{ margin-bottom:10px; display:flex; align-items:baseline; gap:12px; }
+  .sec-tag{ font-family:var(--mono); font-size:12px; color:var(--amber); }
+  .sec-title{ font-family:var(--display); font-size:26px; font-weight:600; }
+  .sec-sub{ font-size:14px; color:var(--muted); max-width:600px; margin-bottom:26px; }
+
+  /* ---------- QUERY PLAYGROUND ---------- */
+  .pg-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+  .pg-chip{ font-family:var(--mono); font-size:11.5px; color:var(--teal); background:var(--teal-soft); border:1px solid rgba(87,217,201,0.28); border-radius:6px; padding:6px 10px; }
+  .pg-chip:hover{ background:rgba(87,217,201,0.22); }
+  .pg-box{ background:var(--panel); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .pg-input-row{ display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--line); background:var(--panel-2); }
+  .pg-input-row .p{ font-family:var(--mono); color:var(--teal); font-size:14px; flex-shrink:0; }
+  .pg-input-row input{
+    flex:1; background:transparent; border:none; outline:none; color:var(--text);
+    font-family:var(--mono); font-size:14px;
+  }
+  .pg-input-row input::placeholder{ color:var(--muted-2); }
+  .pg-run{ background:var(--amber); color:var(--ink); border:none; border-radius:6px; padding:8px 14px; font-family:var(--mono); font-size:12px; font-weight:700; flex-shrink:0; }
+  .pg-run:hover{ opacity:.88; }
+  .pg-output{ padding:18px 16px 22px; font-family:var(--mono); font-size:13px; min-height:70px; }
+  .pg-hint{ color:var(--muted-2); }
+  .pg-error{ color:var(--rose); }
+  .pg-count{ color:var(--muted-2); font-size:11.5px; margin-bottom:12px; }
+  .pg-table{ width:100%; border-collapse:collapse; }
+  .pg-table th{ text-align:left; font-size:11px; color:var(--teal); text-transform:uppercase; letter-spacing:.04em; padding:8px 10px; border-bottom:1px solid var(--line); }
+  .pg-table td{ font-family:var(--body); font-size:13px; color:var(--text); padding:10px 10px; border-bottom:1px solid var(--panel-2); vertical-align:top; }
+  .pg-table tr{ opacity:0; animation:rowIn .35s ease forwards; }
+  @keyframes rowIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ---------- SKILLS GRID ---------- */
+  .grid-toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+  .grid-search{ flex:1; min-width:180px; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:10px 14px; color:var(--text); font-family:var(--mono); font-size:13px; outline:none; }
+  .grid-search::placeholder{ color:var(--muted-2); }
+  .grid-filter{ display:flex; gap:6px; flex-wrap:wrap; }
+  .grid-filter button{ font-family:var(--mono); font-size:11.5px; color:var(--muted); background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:8px 12px; }
+  .grid-filter button.active{ color:var(--amber); border-color:var(--amber); background:var(--amber-soft); }
+  .skills-table{ width:100%; border-collapse:collapse; border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .skills-table th{
+    text-align:left; font-family:var(--mono); font-size:11px; color:var(--teal); text-transform:uppercase;
+    letter-spacing:.04em; padding:12px 16px; background:var(--panel-2); border-bottom:1px solid var(--line); cursor:pointer; user-select:none;
+  }
+  .skills-table th:hover{ color:var(--amber); }
+  .skills-table th .arrow{ margin-left:4px; opacity:0.5; font-size:10px; }
+  .skills-table td{ padding:12px 16px; border-bottom:1px solid var(--line); background:var(--panel); font-size:13.5px; }
+  .skills-table tr:last-child td{ border-bottom:none; }
+  .skill-cat{ font-family:var(--mono); font-size:11px; color:var(--muted); }
+  .skill-name{ color:var(--text); font-weight:500; }
+  .skill-bar-wrap{ display:flex; align-items:center; gap:10px; }
+  .skill-bar-track{ flex:1; height:6px; border-radius:4px; background:var(--panel-2); overflow:hidden; min-width:80px; }
+  .skill-bar-fill{ height:100%; border-radius:4px; background:linear-gradient(90deg, var(--teal), var(--amber)); width:0%; transition:width 1s cubic-bezier(.2,.8,.2,1); }
+  .skill-pct{ font-family:var(--mono); font-size:11px; color:var(--muted-2); width:34px; text-align:right; flex-shrink:0; }
+  .grid-note{ margin-top:12px; font-size:11.5px; color:var(--muted-2); }
+
+  /* ---------- EXPERIENCE ACCORDION ---------- */
+  .timeline{ border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--panel); }
+  .tl-item{ border-top:1px solid var(--line); }
+  .tl-item:first-child{ border-top:none; }
+  .tl-head{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 20px; cursor:pointer; }
+  .tl-head:hover{ background:var(--panel-2); }
+  .tl-left{ display:flex; align-items:center; gap:14px; }
+  .tl-dot{ width:8px; height:8px; border-radius:50%; background:var(--teal); flex-shrink:0; }
+  .tl-role{ font-family:var(--display); font-weight:600; font-size:15.5px; }
+  .tl-company{ font-family:var(--mono); font-size:12px; color:var(--teal); margin-top:3px; }
+  .tl-period{ font-family:var(--mono); font-size:11.5px; color:var(--muted); white-space:nowrap; }
+  .tl-chev{ color:var(--amber); transition:transform .2s ease; margin-left:10px; }
+  .tl-item.open .tl-chev{ transform:rotate(90deg); }
+  .tl-body{ max-height:0; overflow:hidden; transition:max-height .35s ease; }
+  .tl-item.open .tl-body{ max-height:1200px; }
+  .tl-body-inner{ padding:0 20px 20px 42px; }
+  .tl-body-inner ul{ margin-left:16px; margin-bottom:10px; }
+  .tl-body-inner li{ font-size:13.5px; color:var(--muted); margin-bottom:7px; }
+  .tl-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .tl-tags span{ font-family:var(--mono); font-size:10.5px; color:var(--amber); background:var(--amber-soft); border:1px solid rgba(232,163,61,0.25); border-radius:5px; padding:3px 8px; }
+  .tl-subproj{ margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); }
+  .tl-subproj-title{ font-family:var(--mono); font-size:12.5px; color:var(--text); font-weight:600; margin-bottom:4px; }
+
+  /* ---------- CERT FLIP CARDS ---------- */
+  .certs{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:16px; }
+  .flip-card{ perspective:1000px; height:150px; }
+  .flip-inner{ position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d; }
+  .flip-card.flipped .flip-inner{ transform:rotateY(180deg); }
+  .flip-face{ position:absolute; inset:0; backface-visibility:hidden; border-radius:10px; border:1px solid var(--line); padding:16px; display:flex; flex-direction:column; }
+  .flip-front{ background:var(--panel); justify-content:space-between; }
+  .flip-back{ background:var(--panel-2); transform:rotateY(180deg); justify-content:center; }
+  .flip-icon{ font-family:var(--mono); font-size:10px; color:var(--ink); background:var(--amber); border-radius:4px; padding:3px 6px; width:fit-content; font-weight:700; }
+  .flip-short{ font-family:var(--display); font-size:15px; font-weight:600; }
+  .flip-hint{ font-family:var(--mono); font-size:10.5px; color:var(--muted-2); }
+  .flip-back .name{ font-size:12.5px; color:var(--text); margin-bottom:8px; }
+  .flip-back .meta{ font-family:var(--mono); font-size:11px; color:var(--teal); }
+
+  /* ---------- EDUCATION ---------- */
+  .edu{ border:1px solid var(--line); border-radius:10px; background:var(--panel); padding:20px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; }
+  .edu-degree{ font-family:var(--display); font-size:17px; font-weight:600; }
+  .edu-school{ font-family:var(--mono); font-size:13px; color:var(--teal); margin-top:6px; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ padding:70px 0 60px; border-top:1px solid var(--line); text-align:center; }
+  .footer-tag{ font-family:var(--mono); font-size:12px; color:var(--amber); margin-bottom:14px; }
+  .footer-title{ font-family:var(--display); font-size:clamp(26px,4vw,38px); font-weight:600; margin-bottom:18px; }
+  .footer-links{ display:flex; justify-content:center; gap:24px; flex-wrap:wrap; font-family:var(--mono); font-size:13px; }
+  .footer-links a{ text-decoration:none; color:var(--muted); border-bottom:1px solid transparent; transition:.15s; }
+  .footer-links a:hover{ color:var(--teal); border-color:var(--teal); }
+  .footer-note{ margin-top:40px; font-family:var(--mono); font-size:11px; color:var(--muted-2); }
+
+  .reveal{ opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.show{ opacity:1; transform:translateY(0); }
+
+  @media (max-width:640px){
+    .pg-input-row{ flex-wrap:wrap; }
+    .skills-table th:nth-child(1), .skills-table td:nth-child(1){ display:none; }
+    .tl-period{ display:none; }
+    .edu{ flex-direction:column; align-items:flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="tabbar">
+  <div class="tabbar-inner">
+    <a class="tab active" href="#top"><span class="dot"></span>portfolio.sql</a>
+    <a class="tab" href="#playground">query console</a>
+    <a class="tab" href="#skills">skills</a>
+    <a class="tab" href="#experience">experience</a>
+    <a class="tab" href="#certifications">certifications</a>
+    <a class="tab" href="#contact">contact</a>
+    <div class="tabbar-spacer"></div>
+    <div class="tabbar-status">connected · quezon_city.ph</div>
+  </div>
+</div>
+
+<div id="top" class="hero">
+  <div class="wrap">
+    <div class="console">
+      <div class="console-head">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="label">SQL&gt; alvin_aganan.sql</div>
+      </div>
+      <div class="console-body">
+        <div class="console-line" id="typeLine"></div>
+        <div class="result-row" id="resultRow">
+          <div class="result-name">Alvin John Aganan</div>
+          <div class="result-title">FULL STACK DEVELOPER &nbsp;·&nbsp; ORACLE APEX SME</div>
+          <div class="result-tag">6 years building enterprise web apps — from Oracle APEX &amp; PL/SQL to Java, PHP, and modern front-end. This whole site runs on a tiny query engine I wrote — scroll down and try it.</div>
+          <div class="result-meta">
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg>
+              <a href="mailto:alvinj.aganan@gmail.com">alvinj.aganan@gmail.com</a>
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13 1 .36 1.99.68 2.94a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.14-1.27a2 2 0 0 1 2.11-.45c.95.32 1.94.55 2.94.68A2 2 0 0 1 22 16.92z"/></svg>
+              +63 912 738 2763
+            </span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Quezon City, Philippines
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="playground">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-tag">01</span><span class="sec-title">Query Console</span></div>
+    <p class="sec-sub reveal">My career, structured like the databases I work with every day. Run a real query below — this parses actual SQL-like syntax against my experience, projects, skills, and certifications.</p>
+
+    <div class="pg-chips reveal">
+      <button class="pg-chip" data-q="SELECT * FROM projects WHERE tech LIKE '%APEX%';">Oracle APEX projects</button>
+      <button class="pg-chip" data-q="SELECT * FROM experience ORDER BY start DESC;">Career timeline</button>
+      <button class="pg-chip" data-q="SELECT * FROM skills WHERE category = 'oracle';">Oracle skillset</button>
+      <button class="pg-chip" data-q="SELECT * FROM certifications;">All certifications</button>
+      <button class="pg-chip" data-q="SELECT name, tech FROM projects WHERE company = 'accenture';">Accenture project stack</button>
+    </div>
+
+    <div class="pg-box reveal">
+      <div class="pg-input-row">
+        <span class="p">SQL&gt;</span>
+        <input id="queryInput" type="text" spellcheck="false" placeholder="SELECT * FROM skills WHERE category = 'oracle';" value="SELECT * FROM projects WHERE tech LIKE '%APEX%';">
+        <button class="pg-run" id="runBtn">RUN ▸</button>
+      </div>
+      <div class="pg-output" id="queryOutput">
+        <div class="pg-hint">// tables: experience · projects · skills · certifications — try WHERE, LIKE '%value%', and ORDER BY</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-tag">02</span><span class="sec-title">Skills — Interactive Grid</span></div>
+    <p class="sec-sub reveal">Sortable, filterable, searchable — styled after the Interactive Grids I build in Oracle APEX every day.</p>
+
+    <div class="grid-toolbar reveal">
+      <input class="grid-search" id="skillSearch" type="text" placeholder="Search skills…">
+      <div class="grid-filter" id="skillFilters"></div>
+    </div>
+
+    <table class="skills-table reveal">
+      <thead>
+        <tr>
+          <th data-col="category">Category <span class="arrow">↕</span></th>
+          <th data-col="skill">Skill <span class="arrow">↕</span></th>
+          <th data-col="proficiency">Proficiency <span class="arrow">↕</span></th>
+        </tr>
+      </thead>
+      <tbody id="skillsBody"></tbody>
+    </table>
+    <div class="grid-note reveal">Proficiency is self-rated — a quick way to signal depth, not a formal metric.</div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-tag">03</span><span class="sec-title">Experience</span></div>
+    <p class="sec-sub reveal">Click a role to expand — projects, responsibilities, and the stack behind each one.</p>
+    <div class="timeline reveal" id="timeline"></div>
+  </div>
+</section>
+
+<section id="certifications">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-tag">04</span><span class="sec-title">Certifications</span></div>
+    <p class="sec-sub reveal">Flip a card for the full title.</p>
+    <div class="certs" id="certsGrid"></div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="sec-tag">05</span><span class="sec-title">Education</span></div>
+    <div class="edu reveal">
+      <div>
+        <div class="edu-degree">Bachelor of Science in Information Technology (BSIT)</div>
+        <div class="edu-school">Polytechnic University of the Philippines</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="footer-tag reveal">-- end of result set --</div>
+    <div class="footer-title reveal">Let's build something together.</div>
+    <div class="footer-links reveal">
+      <a href="mailto:alvinj.aganan@gmail.com">alvinj.aganan@gmail.com</a>
+      <a href="tel:+639127382763">+63 912 738 2763</a>
+      <span>Quezon City, Philippines</span>
+    </div>
+    <div class="footer-note">COMMIT; -- portfolio.sql</div>
+  </div>
+</footer>
+
+<script>
+/* ============ DATA ============ */
+const DB = {
+  experience: [
+    { role:"Packaged Application Development Analyst", company:"Accenture, Inc.", start:"2023-08", period:"Aug 2023 – Present", tech:"Oracle APEX, PL/SQL, JavaScript, AJAX",
+      summary:"Oracle APEX SME and PL/SQL Developer across four client and internal engagements.",
+      bullets:[],
+      sub:[
+        {name:"Dr. Max Pharmacy Project", period:"Nov 2025 – Current", roles:"Team Co-Lead, APEX Senior Developer, PL/SQL Developer", bullets:["EMEA client-based project — one of two primary points of contact for high-priority deliverables and onshore ad-hoc requirements.","Mentors and supervises two junior developers, delegating tasks and facilitating knowledge transfer."], tags:["Oracle APEX","PL/SQL","JavaScript","AJAX","APEX Plugins"]},
+        {name:"University of Tokyo Project", period:"Apr – Oct 2025", roles:"APEX Senior Developer, QA Tester, Business Analyst", bullets:["APAC client ERP system — built 7 Oracle APEX applications.","Created UTR docs and tested 100+ scenarios under strict Japanese coding standards."], tags:["Oracle APEX","PL/SQL","SQL","JavaScript"]},
+        {name:"CodeGENIE Project", period:"May – Jul 2025", roles:"UX/UI Designer, APEX Developer", bullets:["Internal Oracle TECH Domain project — translated business requirements into functional APEX UI.","Connected Oracle APEX to an API for user and admin pages."], tags:["Oracle APEX","PL/SQL","Postman"]},
+        {name:"SaaSSecure Project", period:"Oct 2023 – Apr 2024", roles:"Java, JavaScript & APEX Developer", bullets:["Internal HCM project extracting structured data from client Fusion applications.","Built a Java microservice extending Oracle APEX reporting for Excel/PowerPoint exports.","Self-taught Java, Spring Boot, Maven, Apache POI, Jsoup for the effort."], tags:["Oracle APEX","Java","Spring Boot","Apache POI"]}
+      ]
+    },
+    { role:"Software Engineer I", company:"Kawasaki Heavy Industry — Design and Technical Service Inc.", start:"2021-01", period:"2021 – 2023 (2 yrs)", tech:"PHP, MySQL, C#.NET",
+      summary:"Pioneered web development and built the company's first formal SDLC framework.",
+      bullets:["Automated repetitive manual workflows across engineering departments.","Promoted from Associate Software Engineer to Software Engineer I."],
+      sub:[
+        {name:"KDT Cloud Navigator", period:"Mar – Nov 2023", roles:"PM, Business Analyst, UX/UI Designer, Full Stack Developer", bullets:["Web-based system surfacing files among 50,000+ archived documents via tagging and search.","Won First Place at the Annual Kaizen Competition — ₱30,000 prize for organizational impact."], tags:["PHP","MySQL","Bootstrap","JavaScript"]},
+        {name:"Web Request System", period:"Nov 2021 – Apr 2022", roles:"Sole Full Stack Developer", bullets:["Ticketing system for automation requests, integrated with Outlook for automatic email dispatch."], tags:["PHP","MySQL","W3.CSS"]},
+        {name:"KDT Screen Time", period:"Jan – Feb 2023", roles:"UI/UX Designer, Frontend Developer", bullets:["Employee activity monitoring app revamped for commercialization."], tags:["C#.NET","Figma"]},
+        {name:"EE Photo Database", period:"Aug – Oct 2022", roles:"Full Stack Developer, UI/UX Designer", bullets:["Photo management software with tagging and advanced search."], tags:["C#.NET","MySQL","Figma"]}
+      ]
+    },
+    { role:"Technical Consultant", company:"Barhead Solutions Inc.", start:"2020-11", period:"Nov 2020 – Jan 2021 (3 mos)", tech:"Power Platform, Dynamics 365",
+      summary:"D365 CRM Bootcamp — hands-on with Microsoft Power Platform.",
+      bullets:["Configured and provisioned Power Apps, Automate, Virtual Agents, Pages, and Power BI."], sub:[]
+    },
+    { role:"Junior Web Developer", company:"JuanTax", start:"2020-02", period:"Feb 2020 – May 2020 (4 mos)", tech:"HTML, WordPress, MVC",
+      summary:"Maintained the company website and resolved front/back-end bugs.",
+      bullets:["Revamped page modules from basic HTML into Material Design Bootstrap.","Adapted quickly to MVC, WordPress, Jira, and Bitbucket."], sub:[]
+    }
+  ],
+  projects: [
+    { name:"Dr. Max Pharmacy", company:"Accenture", period:"Nov 2025 – Current", tech:"Oracle APEX, PL/SQL, JavaScript, AJAX", roles:"Team Co-Lead, APEX Senior Dev" },
+    { name:"University of Tokyo", company:"Accenture", period:"Apr – Oct 2025", tech:"Oracle APEX, PL/SQL, SQL, JavaScript", roles:"APEX Senior Dev, QA Tester" },
+    { name:"CodeGENIE", company:"Accenture", period:"May – Jul 2025", tech:"Oracle APEX, PL/SQL, API Integration", roles:"UX/UI Designer, APEX Developer" },
+    { name:"SaaSSecure", company:"Accenture", period:"Oct 2023 – Apr 2024", tech:"Oracle APEX, Java, Spring Boot, Apache POI", roles:"Java & APEX Developer" },
+    { name:"KDT Cloud Navigator", company:"Kawasaki Heavy Industry", period:"Mar – Nov 2023", tech:"PHP, MySQL, Bootstrap, JavaScript", roles:"PM, Full Stack Developer" },
+    { name:"Web Request System", company:"Kawasaki Heavy Industry", period:"Nov 2021 – Apr 2022", tech:"PHP, MySQL, W3.CSS", roles:"Full Stack Developer" },
+    { name:"KDT Screen Time", company:"Kawasaki Heavy Industry", period:"Jan – Feb 2023", tech:"C#.NET, Figma", roles:"Frontend Developer" },
+    { name:"EE Photo Database", company:"Kawasaki Heavy Industry", period:"Aug – Oct 2022", tech:"C#.NET, MySQL, Figma", roles:"Full Stack Developer" }
+  ],
+  skills: [
+    { category:"oracle", skill:"Oracle APEX", proficiency:95 },
+    { category:"oracle", skill:"PL/SQL", proficiency:93 },
+    { category:"oracle", skill:"SQL", proficiency:92 },
+    { category:"oracle", skill:"Visual Builder Studio", proficiency:72 },
+    { category:"frontend", skill:"JavaScript", proficiency:88 },
+    { category:"frontend", skill:"HTML5 / CSS3", proficiency:90 },
+    { category:"frontend", skill:"jQuery", proficiency:85 },
+    { category:"frontend", skill:"Bootstrap 5", proficiency:82 },
+    { category:"backend", skill:"PHP", proficiency:83 },
+    { category:"backend", skill:"Java / Spring Boot", proficiency:66 },
+    { category:"backend", skill:"C# / .NET", proficiency:65 },
+    { category:"database", skill:"MySQL", proficiency:85 },
+    { category:"database", skill:"Oracle DB", proficiency:90 },
+    { category:"tools", skill:"Git / GitHub", proficiency:80 },
+    { category:"tools", skill:"Figma", proficiency:75 },
+    { category:"platform", skill:"Power Platform / D365", proficiency:58 }
+  ],
+  certifications: [
+    { name:"Oracle APEX Cloud Developer Certified Professional", issuer:"Oracle", year:"2024", code:"PK" },
+    { name:"Oracle Redwood Application 2023 Certified Developer Associate", issuer:"Oracle", year:"2023", code:"CDA" },
+    { name:"Oracle Guided Learning Content Developer Certified Foundations Associate Rel 1", issuer:"Oracle", year:"—", code:"FA" },
+    { name:"Oracle Cloud Data Management 2023 Certified Foundations Associate", issuer:"Oracle", year:"2023", code:"FA" },
+    { name:"Oracle Cloud Infrastructure 2024 Certified Foundations Associate", issuer:"Oracle", year:"2024", code:"FA" },
+    { name:"Oracle Cloud Infrastructure 2024 Generative AI Certified Professional", issuer:"Oracle", year:"2024", code:"CP" }
+  ]
+};
+
+/* ============ HERO TYPE ANIMATION ============ */
+const typeEl = document.getElementById('typeLine');
+const resultRow = document.getElementById('resultRow');
+const fullText = [
+  {t:'SQL&gt; ', c:'prompt'}, {t:'SELECT ', c:'kw'}, {t:'name, role, stack ', c:''},
+  {t:'FROM ', c:'kw'}, {t:'engineers ', c:''}, {t:'WHERE ', c:'kw'},
+  {t:"specialty = 'oracle_apex' ", c:'str'}, {t:'AND ', c:'kw'}, {t:"available = ", c:''}, {t:'TRUE', c:'kw'}, {t:';', c:''}
+];
+const plain = fullText.map(f => f.t).join('');
+let ti = 0;
+function typeChar(){
+  if(ti <= plain.length){
+    let remaining = ti, html = '';
+    for(const seg of fullText){
+      if(remaining <= 0) break;
+      const take = Math.min(seg.t.length, remaining);
+      const chunk = seg.t.slice(0, take);
+      html += seg.c ? '<span class="'+seg.c+'">'+chunk+'</span>' : chunk;
+      remaining -= take;
+    }
+    typeEl.innerHTML = html + '<span class="caret"></span>';
+    ti++;
+    setTimeout(typeChar, 20);
+  } else {
+    setTimeout(()=>{ resultRow.classList.add('show'); }, 250);
+  }
+}
+typeChar();
+
+/* ============ QUERY ENGINE ============ */
+function runQuery(raw){
+  let q = raw.trim().replace(/;$/,'');
+  const m = q.match(/^select\s+(.+?)\s+from\s+(\w+)(?:\s+where\s+(.+?))?(?:\s+order\s+by\s+(\w+)(?:\s+(asc|desc))?)?$/i);
+  if(!m) return { error:"Syntax error. Try: SELECT * FROM projects WHERE tech LIKE '%APEX%';" };
+  let [, colsRaw, table, whereRaw, orderCol, orderDir] = m;
+  table = table.toLowerCase();
+  if(!DB[table]) return { error:`Unknown table '${table}'. Try: experience, projects, skills, certifications` };
+  let rows = DB[table].slice();
+  if(whereRaw){
+    const wm = whereRaw.match(/^(\w+)\s*(=|like)\s*'(.*)'$/i);
+    if(!wm) return { error:"Couldn't parse WHERE clause. Use: field = 'value' or field LIKE '%value%'" };
+    const [, field, op, val] = wm;
+    rows = rows.filter(r=>{
+      const cell = (r[field] ?? '').toString().toLowerCase();
+      if(op.toLowerCase() === 'like'){
+        const pattern = '^' + val.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/%/g,'.*') + '$';
+        return new RegExp(pattern).test(cell);
+      }
+      return cell === val.toLowerCase();
+    });
+  }
+  if(orderCol){
+    rows.sort((a,b)=>{
+      const av = (a[orderCol] ?? ''), bv = (b[orderCol] ?? '');
+      if(av < bv) return orderDir === 'desc' ? 1 : -1;
+      if(av > bv) return orderDir === 'desc' ? -1 : 1;
+      return 0;
+    });
+  }
+  const sample = DB[table][0] || {};
+  const cols = colsRaw.trim() === '*' ? Object.keys(sample).filter(k=>!['sub','bullets','start'].includes(k)) : colsRaw.split(',').map(s=>s.trim());
+  return { cols, rows, table };
+}
+
+function renderQueryResult(res){
+  const out = document.getElementById('queryOutput');
+  if(res.error){
+    out.innerHTML = `<div class="pg-error">✕ ${res.error}</div>`;
+    return;
+  }
+  if(res.rows.length === 0){
+    out.innerHTML = `<div class="pg-hint">0 rows returned.</div>`;
+    return;
+  }
+  let html = `<div class="pg-count">${res.rows.length} row${res.rows.length>1?'s':''} returned from '${res.table}'</div>`;
+  html += `<table class="pg-table"><thead><tr>`;
+  res.cols.forEach(c=> html += `<th>${c}</th>`);
+  html += `</tr></thead><tbody>`;
+  res.rows.forEach((r,idx)=>{
+    html += `<tr style="animation-delay:${idx*0.05}s">`;
+    res.cols.forEach(c=> html += `<td>${r[c] !== undefined ? r[c] : ''}</td>`);
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+  out.innerHTML = html;
+}
+
+const queryInput = document.getElementById('queryInput');
+document.getElementById('runBtn').addEventListener('click', ()=> renderQueryResult(runQuery(queryInput.value)));
+queryInput.addEventListener('keydown', e=>{ if(e.key === 'Enter') renderQueryResult(runQuery(queryInput.value)); });
+document.querySelectorAll('.pg-chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    queryInput.value = chip.dataset.q;
+    renderQueryResult(runQuery(chip.dataset.q));
+  });
+});
+// run default query once playground is visible
+renderQueryResult(runQuery(queryInput.value));
+
+/* ============ SKILLS GRID ============ */
+let skillState = { sortCol:'proficiency', sortDir:'desc', filter:'all', search:'' };
+const categories = ['all', ...new Set(DB.skills.map(s=>s.category))];
+const filterWrap = document.getElementById('skillFilters');
+categories.forEach(cat=>{
+  const btn = document.createElement('button');
+  btn.textContent = cat;
+  if(cat === 'all') btn.classList.add('active');
+  btn.addEventListener('click', ()=>{
+    skillState.filter = cat;
+    [...filterWrap.children].forEach(b=>b.classList.toggle('active', b===btn));
+    renderSkills();
+  });
+  filterWrap.appendChild(btn);
+});
+document.getElementById('skillSearch').addEventListener('input', e=>{
+  skillState.search = e.target.value.toLowerCase();
+  renderSkills();
+});
+document.querySelectorAll('.skills-table th[data-col]').forEach(th=>{
+  th.addEventListener('click', ()=>{
+    const col = th.dataset.col;
+    if(skillState.sortCol === col){ skillState.sortDir = skillState.sortDir === 'asc' ? 'desc' : 'asc'; }
+    else { skillState.sortCol = col; skillState.sortDir = 'desc'; }
+    renderSkills();
+  });
+});
+function renderSkills(){
+  let rows = DB.skills.slice();
+  if(skillState.filter !== 'all') rows = rows.filter(r=>r.category === skillState.filter);
+  if(skillState.search) rows = rows.filter(r=> r.skill.toLowerCase().includes(skillState.search) || r.category.toLowerCase().includes(skillState.search));
+  rows.sort((a,b)=>{
+    const av=a[skillState.sortCol], bv=b[skillState.sortCol];
+    const cmp = typeof av === 'number' ? av-bv : String(av).localeCompare(String(bv));
+    return skillState.sortDir === 'asc' ? cmp : -cmp;
+  });
+  const body = document.getElementById('skillsBody');
+  body.innerHTML = rows.map(r=>`
+    <tr>
+      <td class="skill-cat">${r.category}</td>
+      <td class="skill-name">${r.skill}</td>
+      <td>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-track"><div class="skill-bar-fill" data-pct="${r.proficiency}"></div></div>
+          <span class="skill-pct">${r.proficiency}%</span>
+        </div>
+      </td>
+    </tr>`).join('') || `<tr><td colspan="3" style="color:var(--muted-2); font-family:var(--mono); font-size:12px;">No matching skills.</td></tr>`;
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('.skill-bar-fill').forEach(el=>{ el.style.width = el.dataset.pct + '%'; });
+  });
+}
+renderSkills();
+
+/* ============ EXPERIENCE TIMELINE ============ */
+const timelineEl = document.getElementById('timeline');
+DB.experience.forEach((job, idx)=>{
+  const item = document.createElement('div');
+  item.className = 'tl-item';
+  let subHtml = '';
+  job.sub.forEach(s=>{
+    subHtml += `<div class="tl-subproj">
+      <div class="tl-subproj-title">${s.name} <span style="color:var(--muted-2); font-weight:400;">— ${s.period}</span></div>
+      <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">${s.roles}</div>
+      <ul>${s.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>
+      <div class="tl-tags">${s.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+    </div>`;
+  });
+  item.innerHTML = `
+    <div class="tl-head">
+      <div class="tl-left">
+        <div class="tl-dot"></div>
+        <div>
+          <div class="tl-role">${job.role}</div>
+          <div class="tl-company">${job.company}</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <div class="tl-period">${job.period}</div>
+        <div class="tl-chev">›</div>
+      </div>
+    </div>
+    <div class="tl-body">
+      <div class="tl-body-inner">
+        <p style="font-size:13.5px; color:var(--muted); margin-bottom:10px;">${job.summary}</p>
+        ${job.bullets.length ? `<ul>${job.bullets.map(b=>`<li>${b}</li>`).join('')}</ul>` : ''}
+        ${subHtml}
+      </div>
+    </div>`;
+  item.querySelector('.tl-head').addEventListener('click', ()=> item.classList.toggle('open'));
+  if(idx === 0) item.classList.add('open');
+  timelineEl.appendChild(item);
+});
+
+/* ============ CERT FLIP CARDS ============ */
+const certsGrid = document.getElementById('certsGrid');
+DB.certifications.forEach(c=>{
+  const shortName = c.name.split(' ').slice(0,2).join(' ');
+  const card = document.createElement('div');
+  card.className = 'flip-card';
+  card.innerHTML = `
+    <div class="flip-inner">
+      <div class="flip-face flip-front">
+        <span class="flip-icon">${c.code}</span>
+        <div>
+          <div class="flip-short">${shortName}</div>
+          <div class="flip-hint">tap to view full title ›</div>
+        </div>
+      </div>
+      <div class="flip-face flip-back">
+        <div class="name">${c.name}</div>
+        <div class="meta">${c.issuer} · ${c.year}</div>
+      </div>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+  certsGrid.appendChild(card);
+});
+
+/* ============ SCROLL REVEAL + ACTIVE TAB ============ */
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } });
+}, {threshold:0.1});
+revealEls.forEach(el=>io.observe(el));
+
+const tabs = document.querySelectorAll('.tab[href^="#"]');
+const sections = Array.from(tabs).map(t => document.querySelector(t.getAttribute('href'))).filter(Boolean);
+window.addEventListener('scroll', ()=>{
+  let current = sections[0];
+  for(const s of sections){ if(s.getBoundingClientRect().top < 120) current = s; }
+  tabs.forEach(t=> t.classList.toggle('active', t.getAttribute('href') === '#'+current.id));
+});
+</script>
+</body>
+</html>
