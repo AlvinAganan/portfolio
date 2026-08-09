@@ -597,9 +597,28 @@ DB.experience.forEach((job, idx)=>{
 
 /* ============ CERT FLIP CARDS ============ */
 const certsGrid = document.getElementById('certsGrid');
+let certAPEX    = "Oracle APEX Cloud Developer Certified Professional";
+let certRedwood = "Oracle Redwood Application 2023 Certified Developer Associate";
+let certOGL     = "Oracle Guided Learning Content Developer Certified Foundations Associate Rel 1";
+let certDataMan = "Oracle Cloud Data Management 2023 Certified Foundations Associate";
+let certGenAI   = "Oracle Cloud Infrastructure 2024 Generative AI Certified Professional";
+
 DB.certifications.forEach(c=>{
   const shortName = c.name.split(' ').slice(0,2).join(' ');
   const card = document.createElement('div');
+  let certLink = '';
+
+  if (c.name === certAPEX) {
+    certLink = "https://catalog-education.oracle.com/ords/certview/sharebadge?id=F22F5A510E14CBF3E18BA2E3A1CC95A26C1EE523AE2670F80BF568E41958E2BD";
+  } else if (c.name === certRedwood) {
+    certLink = "https://catalog-education.oracle.com/ords/certview/sharebadge?id=21C0E95F1B00AE978D67A17A9CB9CBA817332B07B0A7EA2825AFE931E752D460";
+  } else if (c.name === certOGL) {
+    certLink = "https://catalog-education.oracle.com/ords/certview/sharebadge?id=B778D243203D2AAD2A6A275FE96D172882F410742A2821022F5B2D83E81B2502";
+  } else if (c.name === certDataMan) {
+    certLink = "https://catalog-education.oracle.com/ords/certview/sharebadge?id=27826A19BD57EA7E50F490A32A32649C03F32578F98EB2DF3B7504E32A930967";
+  } else if (c.name === certGenAI) {
+    certLink = "https://catalog-education.oracle.com/ords/certview/sharebadge?id=0195226B9CA8BCDE213BDE226E58511E91DCC604E9E5B0E90E338B6E644A489D";
+  }
   card.className = 'flip-card';
   card.innerHTML = `
     <div class="flip-inner">
@@ -613,6 +632,7 @@ DB.certifications.forEach(c=>{
       <div class="flip-face flip-back">
         <div class="name">${c.name}</div>
         <div class="meta">${c.issuer} · ${c.year}</div>
+        <a href="${certLink}" target="_blank" rel="noopener noreferrer" class="cert-link">View Certificate</a>
       </div>
     </div>`;
   card.addEventListener('click', ()=> card.classList.toggle('flipped'));
