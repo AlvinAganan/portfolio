@@ -42,7 +42,8 @@
 
   /* ---------- NAV ---------- */
   .tabbar{ position:sticky; top:0; z-index:50; background:rgba(10,15,28,0.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
-  .tabbar-inner{ max-width:var(--maxw); margin:0 auto; padding:0 28px; display:flex; align-items:center; gap:2px; height:46px; font-family:var(--mono); font-size:13px; overflow-x:auto; }
+  .tabbar-inner{ max-width:var(--maxw); margin:0 auto; padding:0 28px; display:flex; align-items:center; gap:2px; height:46px; font-family:var(--mono); font-size:13px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none; }
+  .tabbar-inner::-webkit-scrollbar{ display:none; }
   .tab{ display:flex; align-items:center; gap:8px; height:100%; padding:0 16px; color:var(--muted); border-right:1px solid var(--line); text-decoration:none; white-space:nowrap; transition:color .15s ease; }
   .tab:hover{ color:var(--text); }
   .tab.active{ color:var(--amber); background:var(--panel); }
@@ -202,7 +203,7 @@
     <a class="tab" href="#certifications">certifications</a>
     <a class="tab" href="#contact">contact</a>
     <div class="tabbar-spacer"></div>
-    <div class="tabbar-status">connected · quezon_city.ph</div>
+    <div class="tabbar-status">connected · manila.ph</div>
   </div>
 </div>
 
@@ -222,15 +223,15 @@
           <div class="result-meta">
             <span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg>
-              <a href="mailto:alvinj.aganan@gmail.com">alvinj.aganan@gmail.com</a>
+              <a href="mailto:alvinj.aganan+gh@gmail.com">alvinj.aganan+gh@gmail.com</a>
             </span>
-            <span>
+            <!-- <span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13 1 .36 1.99.68 2.94a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.14-1.27a2 2 0 0 1 2.11-.45c.95.32 1.94.55 2.94.68A2 2 0 0 1 22 16.92z"/></svg>
-              +63 912 738 2763
-            </span>
+              +63 912 338 3053
+            </span> -->
             <span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Quezon City, Philippines
+              Manila, Philippines
             </span>
           </div>
         </div>
@@ -322,9 +323,9 @@
     <div class="footer-tag reveal">-- end of result set --</div>
     <div class="footer-title reveal">Let's build something together.</div>
     <div class="footer-links reveal">
-      <a href="mailto:alvinj.aganan@gmail.com">alvinj.aganan@gmail.com</a>
-      <a href="tel:+639127382763">+63 912 738 2763</a>
-      <span>Quezon City, Philippines</span>
+      <a href="mailto:alvinj.aganan+gh@gmail.com">alvinj.aganan+gh@gmail.com</a>
+      <!-- <a href="tel:+639127382763">+63 912 338 3053</a> -->
+      <span>Manila, Philippines</span>
     </div>
     <div class="footer-note">COMMIT; -- portfolio.sql</div>
   </div>
